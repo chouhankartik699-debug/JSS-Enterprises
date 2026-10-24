@@ -14,13 +14,16 @@ export const Hero3DCanvas: React.FC<Hero3DCanvasProps> = ({ mode }) => {
     const container = mountRef.current;
     if (!container) return;
 
+    // Detect mobile viewport
+    const isMobile = window.innerWidth < 768;
+
     // Check WebGL availability
     let renderer: THREE.WebGLRenderer;
     try {
       renderer = new THREE.WebGLRenderer({
-        antialias: true,
+        antialias: !isMobile, // Disable anti-alias on mobile for smooth 60fps & battery saving
         alpha: true,
-        powerPreference: 'high-performance',
+        powerPreference: isMobile ? 'low-power' : 'high-performance',
       });
     } catch {
       return;
@@ -30,15 +33,16 @@ export const Hero3DCanvas: React.FC<Hero3DCanvasProps> = ({ mode }) => {
     const height = container.clientHeight;
 
     renderer.setSize(width, height);
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, isMobile ? 1.5 : 2));
     renderer.toneMapping = THREE.ACESFilmicToneMapping;
     renderer.toneMappingExposure = 1.1;
     container.appendChild(renderer.domElement);
 
     const scene = new THREE.Scene();
 
+    // Adjust camera distance for mobile so 3D objects don't clip off-screen
     const camera = new THREE.PerspectiveCamera(45, width / height, 0.1, 100);
-    camera.position.set(0, 0, 8.5);
+    camera.position.set(0, 0, isMobile ? 10.5 : 8.5);
 
     // Ambient and Key Lighting
     const ambientLight = new THREE.AmbientLight(0xffffff, 0.7);
@@ -56,7 +60,7 @@ export const Hero3DCanvas: React.FC<Hero3DCanvasProps> = ({ mode }) => {
     goldGlow.position.set(0, 0, 2);
     scene.add(goldGlow);
 
-    // Root Group for interactive mouse parallax
+    // Root Group for interactive mouse / touch parallax
     const mainGroup = new THREE.Group();
     scene.add(mainGroup);
 
@@ -236,8 +240,15 @@ export const Hero3DCanvas: React.FC<Hero3DCanvasProps> = ({ mode }) => {
     screenMesh.position.z = 0.085;
     phoneGroup.add(screenMesh);
 
-    phoneGroup.position.set(2.4, 0.2, 0.5);
-    phoneGroup.rotation.set(-0.15, -0.4, 0.05);
+    // Mobile vs Desktop Placement
+    if (isMobile) {
+      phoneGroup.position.set(0.9, -0.6, 0.8);
+      phoneGroup.rotation.set(-0.1, -0.25, 0.04);
+      phoneGroup.scale.set(0.72, 0.72, 0.72);
+    } else {
+      phoneGroup.position.set(2.4, 0.2, 0.5);
+      phoneGroup.rotation.set(-0.15, -0.4, 0.05);
+    }
     mainGroup.add(phoneGroup);
 
     // 2. Traditional Paper / Slate Board Model
@@ -258,12 +269,18 @@ export const Hero3DCanvas: React.FC<Hero3DCanvasProps> = ({ mode }) => {
     tradPaperMesh.position.z = 0.055;
     tradGroup.add(tradPaperMesh);
 
-    tradGroup.position.set(-2.6, -0.2, -0.5);
-    tradGroup.rotation.set(0.1, 0.35, -0.05);
+    if (isMobile) {
+      tradGroup.position.set(-1.0, -0.8, -0.6);
+      tradGroup.rotation.set(0.08, 0.25, -0.04);
+      tradGroup.scale.set(0.68, 0.68, 0.68);
+    } else {
+      tradGroup.position.set(-2.6, -0.2, -0.5);
+      tradGroup.rotation.set(0.1, 0.35, -0.05);
+    }
     mainGroup.add(tradGroup);
 
     // 3. Floating 3D Gold Rings & Geometric Accents
-    const ringGeo = new THREE.TorusGeometry(0.7, 0.03, 16, 64);
+    const ringGeo = new THREE.TorusGeometry(0.7, 0.03, 16, 48);
     const ringMat = new THREE.MeshStandardMaterial({
       color: 0xfbbf24,
       metalness: 0.95,
@@ -271,42 +288,40 @@ export const Hero3DCanvas: React.FC<Hero3DCanvasProps> = ({ mode }) => {
       emissive: 0x78350f,
     });
     const ring1 = new THREE.Mesh(ringGeo, ringMat);
-    ring1.position.set(3.4, 2.0, -1);
+    ring1.position.set(isMobile ? 1.6 : 3.4, isMobile ? 1.4 : 2.0, -1);
     ring1.rotation.x = Math.PI / 3;
     mainGroup.add(ring1);
 
     const ring2 = new THREE.Mesh(ringGeo, ringMat);
-    ring2.position.set(-3.2, -1.8, 1);
+    ring2.position.set(isMobile ? -1.6 : -3.2, isMobile ? -1.2 : -1.8, 1);
     ring2.rotation.y = Math.PI / 4;
     mainGroup.add(ring2);
 
-    // 4. Floating Ambient Particles (Gold / Stardust)
-    const particleCount = 450;
+    // 4. Floating Ambient Particles (reduced on mobile for performance)
+    const particleCount = isMobile ? 120 : 450;
     const particleGeo = new THREE.BufferGeometry();
     const positions = new Float32Array(particleCount * 3);
-    const scales = new Float32Array(particleCount);
 
     for (let i = 0; i < particleCount; i++) {
       positions[i * 3] = (Math.random() - 0.5) * 16;
       positions[i * 3 + 1] = (Math.random() - 0.5) * 12;
       positions[i * 3 + 2] = (Math.random() - 0.5) * 8;
-      scales[i] = Math.random() * 0.05 + 0.02;
     }
 
     particleGeo.setAttribute('position', new THREE.BufferAttribute(positions, 3));
 
     const particleMat = new THREE.PointsMaterial({
       color: 0xf59e0b,
-      size: 0.06,
+      size: isMobile ? 0.08 : 0.06,
       transparent: true,
-      opacity: 0.7,
+      opacity: 0.65,
       blending: THREE.AdditiveBlending,
     });
 
     const particles = new THREE.Points(particleGeo, particleMat);
     scene.add(particles);
 
-    // Mouse Interaction
+    // Mouse / Touch Interaction
     let targetMouseX = 0;
     let targetMouseY = 0;
     let currentMouseX = 0;
@@ -316,20 +331,48 @@ export const Hero3DCanvas: React.FC<Hero3DCanvasProps> = ({ mode }) => {
       const rect = container.getBoundingClientRect();
       const x = ((e.clientX - rect.left) / rect.width) * 2 - 1;
       const y = -(((e.clientY - rect.top) / rect.height) * 2 - 1);
-      targetMouseX = x * 0.5;
-      targetMouseY = y * 0.3;
+      targetMouseX = x * 0.4;
+      targetMouseY = y * 0.25;
     };
 
-    window.addEventListener('mousemove', handleMouseMove);
+    // Touch device support for subtle parallax
+    const handleTouchMove = (e: TouchEvent) => {
+      if (e.touches.length > 0) {
+        const touch = e.touches[0];
+        const rect = container.getBoundingClientRect();
+        const x = ((touch.clientX - rect.left) / rect.width) * 2 - 1;
+        const y = -(((touch.clientY - rect.top) / rect.height) * 2 - 1);
+        targetMouseX = x * 0.25;
+        targetMouseY = y * 0.15;
+      }
+    };
 
-    // Resize Handler
+    window.addEventListener('mousemove', handleMouseMove, { passive: true });
+    window.addEventListener('touchmove', handleTouchMove, { passive: true });
+
+    // Resize Handler with responsive repositioning
     const handleResize = () => {
       if (!container) return;
       const newW = container.clientWidth;
       const newH = container.clientHeight;
+      const isNowMobile = newW < 768;
+
       camera.aspect = newW / newH;
+      camera.position.z = isNowMobile ? 10.5 : 8.5;
       camera.updateProjectionMatrix();
       renderer.setSize(newW, newH);
+
+      if (isNowMobile) {
+        phoneGroup.position.set(0.9, -0.6, 0.8);
+        phoneGroup.scale.set(0.72, 0.72, 0.72);
+        tradGroup.position.set(-1.0, -0.8, -0.6);
+        tradGroup.scale.set(0.68, 0.68, 0.68);
+      } else {
+        phoneGroup.position.set(2.4, 0.2, 0.5);
+        phoneGroup.scale.set(1, 1, 1);
+        tradGroup.position.set(-2.6, -0.2, -0.5);
+        tradGroup.scale.set(1, 1, 1);
+      }
     };
 
     window.addEventListener('resize', handleResize);
@@ -342,34 +385,44 @@ export const Hero3DCanvas: React.FC<Hero3DCanvasProps> = ({ mode }) => {
       animationFrameId = requestAnimationFrame(animate);
       const elapsed = clock.getElapsedTime();
 
-      // Smooth mouse lerp
+      // Smooth mouse / touch lerp
       currentMouseX += (targetMouseX - currentMouseX) * 0.05;
       currentMouseY += (targetMouseY - currentMouseY) * 0.05;
 
       mainGroup.rotation.y = currentMouseX;
       mainGroup.rotation.x = -currentMouseY;
 
+      const basePhoneY = isMobile ? -0.6 : 0.2;
+      const baseTradY = isMobile ? -0.8 : -0.2;
+
       // Floating oscillation
-      phoneGroup.position.y = 0.2 + Math.sin(elapsed * 1.4) * 0.15;
-      phoneGroup.rotation.z = 0.05 + Math.sin(elapsed * 1.1) * 0.03;
+      phoneGroup.position.y = basePhoneY + Math.sin(elapsed * 1.4) * 0.12;
+      phoneGroup.rotation.z = 0.04 + Math.sin(elapsed * 1.1) * 0.025;
 
-      tradGroup.position.y = -0.2 + Math.cos(elapsed * 1.2) * 0.12;
-      tradGroup.rotation.z = -0.05 + Math.cos(elapsed * 0.9) * 0.04;
+      tradGroup.position.y = baseTradY + Math.cos(elapsed * 1.2) * 0.1;
+      tradGroup.rotation.z = -0.04 + Math.cos(elapsed * 0.9) * 0.025;
 
-      ring1.rotation.z += 0.01;
-      ring2.rotation.x += 0.008;
+      ring1.rotation.z += 0.008;
+      ring2.rotation.x += 0.006;
 
       // Mode-based highlight focus
+      const targetPhoneScale = isMobile
+        ? modeRef.current === 'digital' ? 0.78 : 0.65
+        : modeRef.current === 'digital' ? 1.15 : 0.88;
+
+      const targetTradScale = isMobile
+        ? modeRef.current === 'digital' ? 0.62 : 0.75
+        : modeRef.current === 'digital' ? 0.85 : 1.12;
+
+      phoneGroup.scale.lerp(new THREE.Vector3(targetPhoneScale, targetPhoneScale, targetPhoneScale), 0.05);
+      tradGroup.scale.lerp(new THREE.Vector3(targetTradScale, targetTradScale, targetTradScale), 0.05);
+
       if (modeRef.current === 'digital') {
-        phoneGroup.scale.lerp(new THREE.Vector3(1.15, 1.15, 1.15), 0.05);
-        tradGroup.scale.lerp(new THREE.Vector3(0.85, 0.85, 0.85), 0.05);
-        phoneGroup.position.z = 1.0;
-        tradGroup.position.z = -1.2;
+        phoneGroup.position.z = isMobile ? 1.0 : 1.0;
+        tradGroup.position.z = isMobile ? -1.0 : -1.2;
       } else {
-        phoneGroup.scale.lerp(new THREE.Vector3(0.88, 0.88, 0.88), 0.05);
-        tradGroup.scale.lerp(new THREE.Vector3(1.12, 1.12, 1.12), 0.05);
-        phoneGroup.position.z = -1.0;
-        tradGroup.position.z = 0.8;
+        phoneGroup.position.z = isMobile ? -0.8 : -1.0;
+        tradGroup.position.z = isMobile ? 0.8 : 0.8;
       }
 
       // Rotate particle cloud gently
@@ -383,6 +436,7 @@ export const Hero3DCanvas: React.FC<Hero3DCanvasProps> = ({ mode }) => {
     return () => {
       cancelAnimationFrame(animationFrameId);
       window.removeEventListener('mousemove', handleMouseMove);
+      window.removeEventListener('touchmove', handleTouchMove);
       window.removeEventListener('resize', handleResize);
       if (container.contains(renderer.domElement)) {
         container.removeChild(renderer.domElement);

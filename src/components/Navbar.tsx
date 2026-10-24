@@ -16,7 +16,7 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenContact }) => {
 
   useEffect(() => {
     const handleScroll = () => {
-      if (window.scrollY > 40) {
+      if (window.scrollY > 20) {
         setScrolled(true);
       } else {
         setScrolled(false);
@@ -52,25 +52,27 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenContact }) => {
         className={`fixed top-0 left-0 right-0 z-40 transition-all duration-300 ${
           scrolled
             ? isLight
-              ? 'py-3 header-scrolled'
-              : 'py-3 bg-[#08090b]/85 backdrop-blur-xl border-b border-white/10 shadow-2xl shadow-black/50'
-            : 'py-5 bg-transparent'
+              ? 'py-2 sm:py-3 header-scrolled'
+              : 'py-2 sm:py-3 bg-[#08090b]/90 backdrop-blur-xl border-b border-white/10 shadow-xl shadow-black/40'
+            : 'py-2.5 sm:py-5 bg-gradient-to-b from-[#08090b]/80 to-transparent'
         }`}
       >
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between">
-          {/* Zone 1: Single text element wordmark */}
+        <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 flex items-center justify-between gap-2">
+          {/* Zone 1: Logo Wordmark (Compact on 9:16 mobile) */}
           <a
             href="#hero"
             onClick={(e) => handleLinkClick(e, '#hero')}
-            className={`text-lg md:text-xl font-extrabold tracking-wider font-display flex items-center gap-2 group ${
+            className={`flex items-center gap-1.5 sm:gap-2 group shrink min-w-0 ${
               isLight ? 'text-slate-900' : 'text-white'
             }`}
           >
-            <span className="w-2.5 h-2.5 rounded-full bg-amber-500 group-hover:scale-125 transition-transform shadow-[0_0_10px_#f59e0b]" />
-            <span className="tracking-tight">{SITE_CONFIG.brandName}</span>
+            <span className="w-2 sm:w-2.5 h-2 sm:h-2.5 rounded-full bg-amber-500 group-hover:scale-125 transition-transform shadow-[0_0_10px_#f59e0b] shrink-0" />
+            <span className="font-extrabold tracking-tight font-display text-sm sm:text-xl truncate">
+              {SITE_CONFIG.brandName}
+            </span>
           </a>
 
-          {/* Zone 2: Navigation Links */}
+          {/* Zone 2: Navigation Links (Desktop only) */}
           <nav className={`hidden lg:flex items-center gap-7 text-sm font-medium ${isLight ? 'text-slate-700' : 'text-neutral-300'}`}>
             {navLinks.map((link) => (
               <a
@@ -87,11 +89,12 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenContact }) => {
             ))}
           </nav>
 
-          {/* Zone 3: Primary Actions + Theme Toggle */}
-          <div className="flex items-center gap-2.5 sm:gap-3">
-            {/* Theme Toggle Button */}
+          {/* Zone 3: Primary Actions (Mobile-Optimized) */}
+          <div className="flex items-center gap-1.5 sm:gap-3 shrink-0">
+            {/* Theme Toggle - Icon only on mobile to save space */}
             <ThemeToggle />
 
+            {/* Desktop WhatsApp Link */}
             <a
               href={`https://wa.me/${SITE_CONFIG.contact.whatsappNumber}?text=${encodeURIComponent(SITE_CONFIG.contact.whatsappDefaultMessage)}`}
               target="_blank"
@@ -107,61 +110,69 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenContact }) => {
               <span>WhatsApp</span>
             </a>
 
+            {/* Start CTA Button - hidden on 9:16 mobile screens (as it's in the bottom bar), visible on sm+ */}
             <button
               onClick={onOpenContact}
-              className="relative inline-flex items-center justify-center gap-2 px-4 sm:px-5 py-2 sm:py-2.5 text-xs md:text-sm font-semibold text-neutral-950 bg-gradient-to-r from-amber-400 via-amber-300 to-amber-500 rounded-lg shadow-[0_0_20px_-3px_rgba(245,158,11,0.5)] hover:shadow-[0_0_25px_rgba(245,158,11,0.7)] hover:scale-[1.02] active:scale-[0.98] transition-all whitespace-nowrap cursor-pointer"
+              className="hidden sm:inline-flex items-center justify-center gap-2 px-4 sm:px-5 py-2 sm:py-2.5 text-xs md:text-sm font-semibold text-neutral-950 bg-gradient-to-r from-amber-400 via-amber-300 to-amber-500 rounded-lg shadow-[0_0_20px_-3px_rgba(245,158,11,0.5)] hover:shadow-[0_0_25px_rgba(245,158,11,0.7)] active:scale-[0.98] transition-all whitespace-nowrap cursor-pointer"
             >
-              <span>Start Your Project</span>
+              <span>Start Project</span>
               <ArrowUpRight className="w-4 h-4 text-neutral-950" />
             </button>
 
-            {/* Mobile Hamburger Button */}
+            {/* Mobile Hamburger Menu Button - Always visible & high contrast */}
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className={`lg:hidden p-2 rounded-lg transition-colors cursor-pointer ${
-                isLight ? 'text-slate-800 hover:bg-slate-100' : 'text-neutral-300 hover:text-white hover:bg-white/10'
+              className={`p-2 rounded-xl border transition-all cursor-pointer flex items-center justify-center min-w-[38px] min-h-[38px] lg:hidden ${
+                isLight
+                  ? 'bg-slate-100 border-slate-300 text-slate-800 active:bg-slate-200'
+                  : 'bg-white/5 border-white/10 text-neutral-200 active:bg-white/15'
               }`}
               aria-label="Toggle navigation menu"
             >
-              {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+              {mobileMenuOpen ? <X className="w-5 h-5 text-amber-400" /> : <Menu className="w-5 h-5" />}
             </button>
           </div>
         </div>
       </header>
 
-      {/* Mobile Drawer */}
+      {/* Mobile Drawer (Perfect for 9:16 Portrait Phones) */}
       {mobileMenuOpen && (
         <div className="fixed inset-0 z-50 lg:hidden">
           {/* Backdrop */}
           <div
-            className="fixed inset-0 bg-black/70 backdrop-blur-md"
+            className="fixed inset-0 bg-black/75 backdrop-blur-md"
             onClick={() => setMobileMenuOpen(false)}
           />
-          {/* Menu Card */}
+          {/* Menu Card Sheet */}
           <div
-            className={`fixed top-18 left-4 right-4 rounded-2xl p-6 shadow-2xl z-50 max-h-[85vh] overflow-y-auto border ${
+            className={`fixed top-14 left-3 right-3 rounded-2xl p-5 shadow-2xl z-50 max-h-[82vh] overflow-y-auto border animate-in fade-in slide-in-from-top-4 duration-200 ${
               isLight
-                ? 'bg-white border-slate-200 text-slate-900 shadow-xl'
-                : 'bg-[#0e1015] border-white/10 text-neutral-200'
+                ? 'bg-white border-slate-200 text-slate-900 shadow-2xl'
+                : 'bg-[#0e1015] border-white/15 text-neutral-200 shadow-[0_10px_40px_rgba(0,0,0,0.8)]'
             }`}
           >
             <div className="flex items-center justify-between pb-3 mb-2 border-b border-inherit">
-              <span className={`text-xs uppercase tracking-widest font-mono font-medium ${isLight ? 'text-slate-500' : 'text-neutral-500'}`}>
-                Navigation
+              <span className={`text-xs uppercase tracking-widest font-mono font-medium ${isLight ? 'text-slate-500' : 'text-neutral-400'}`}>
+                Navigation Menu
               </span>
-              <ThemeToggle />
+              <button
+                onClick={() => setMobileMenuOpen(false)}
+                className="p-1 rounded-md text-neutral-400 hover:text-white"
+              >
+                <X className="w-5 h-5" />
+              </button>
             </div>
 
-            <div className="flex flex-col gap-1.5">
+            <div className="flex flex-col gap-1">
               {navLinks.map((link) => (
                 <a
                   key={link.label}
                   href={link.href}
                   onClick={(e) => handleLinkClick(e, link.href)}
-                  className={`px-4 py-2.5 rounded-lg text-base font-semibold transition-colors flex items-center justify-between ${
+                  className={`px-3.5 py-3 rounded-xl text-base font-semibold transition-colors flex items-center justify-between active:scale-[0.99] ${
                     isLight
-                      ? 'text-slate-800 hover:text-amber-700 hover:bg-slate-50'
-                      : 'text-neutral-200 hover:text-white hover:bg-white/5'
+                      ? 'text-slate-800 hover:text-amber-700 hover:bg-slate-50 active:bg-slate-100'
+                      : 'text-neutral-200 hover:text-white hover:bg-white/5 active:bg-white/10'
                   }`}
                 >
                   <span>{link.label}</span>
@@ -170,13 +181,13 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenContact }) => {
               ))}
             </div>
 
-            <div className={`mt-6 pt-5 border-t flex flex-col gap-3 ${isLight ? 'border-slate-200' : 'border-white/10'}`}>
+            <div className={`mt-5 pt-4 border-t flex flex-col gap-2.5 ${isLight ? 'border-slate-200' : 'border-white/10'}`}>
               <button
                 onClick={() => {
                   setMobileMenuOpen(false);
                   onOpenContact();
                 }}
-                className="w-full py-3 px-4 rounded-xl text-center font-semibold text-sm bg-gradient-to-r from-amber-400 to-amber-500 text-neutral-950 shadow-md"
+                className="w-full py-3.5 px-4 rounded-xl text-center font-bold text-sm bg-gradient-to-r from-amber-400 to-amber-500 text-neutral-950 shadow-md active:scale-[0.98]"
               >
                 Start Your Project
               </button>
@@ -184,10 +195,10 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenContact }) => {
                 href={`https://wa.me/${SITE_CONFIG.contact.whatsappNumber}?text=${encodeURIComponent(SITE_CONFIG.contact.whatsappDefaultMessage)}`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className={`w-full py-3 px-4 rounded-xl text-center font-medium text-sm border flex items-center justify-center gap-2 ${
+                className={`w-full py-3 px-4 rounded-xl text-center font-medium text-sm border flex items-center justify-center gap-2 active:scale-[0.98] ${
                   isLight
-                    ? 'bg-slate-50 border-slate-200 text-slate-800 hover:bg-slate-100'
-                    : 'bg-white/5 border-white/10 text-neutral-200 hover:bg-white/10'
+                    ? 'bg-slate-50 border-slate-200 text-slate-800'
+                    : 'bg-white/5 border-white/10 text-neutral-200'
                 }`}
               >
                 <MessageCircle className="w-4 h-4 text-emerald-500" />

@@ -13,6 +13,7 @@ import { WhyUsSection } from './components/WhyUsSection';
 import { CinematicCTA } from './components/CinematicCTA';
 import { ContactSection } from './components/ContactSection';
 import { Footer } from './components/Footer';
+import { MobileQuickBar } from './components/MobileQuickBar';
 import { ThemeProvider, useTheme } from './context/ThemeContext';
 
 function AppContent() {
@@ -52,7 +53,7 @@ function AppContent() {
 
   return (
     <div
-      className={`min-h-screen relative transition-colors duration-300 selection:bg-amber-500/30 selection:text-amber-800 ${
+      className={`min-h-screen relative transition-colors duration-300 selection:bg-amber-500/30 selection:text-amber-800 pb-16 sm:pb-0 overflow-x-hidden ${
         isLight ? 'bg-slate-50 text-slate-900' : 'bg-[#08090b] text-[#f4f4f5]'
       }`}
     >
@@ -108,6 +109,9 @@ function AppContent() {
 
       {/* Footer */}
       <Footer />
+
+      {/* Mobile Sticky Quick Action Bar (Call, WhatsApp, Inquiry) */}
+      <MobileQuickBar onStartProject={handleStartProject} />
     </div>
   );
 }
