@@ -1,0 +1,250 @@
+@import "tailwindcss";
+
+@layer base {
+  :root {
+    --color-bg: #08090b;
+    --color-surface: #0f1115;
+    --color-surface-hover: #161920;
+    --color-accent: #f59e0b;
+    --color-accent-gold: #fbbf24;
+  }
+
+  body {
+    font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+    background-color: #08090b;
+    color: #f4f4f5;
+    overflow-x: hidden;
+    transition: background-color 0.3s ease, color 0.3s ease;
+  }
+
+  h1, h2, h3, h4, .font-display {
+    font-family: 'Syne', system-ui, sans-serif;
+    letter-spacing: -0.02em;
+  }
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-track {
+  background: #08090b;
+}
+::-webkit-scrollbar-thumb {
+  background: #27272a;
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #f59e0b;
+}
+
+/* Dark Mode Glass and glow utilities (Default) */
+.glass-panel {
+  background: rgba(18, 20, 26, 0.7);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.glass-panel-amber {
+  background: rgba(22, 19, 13, 0.65);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(245, 158, 11, 0.18);
+}
+
+.glow-amber-sm {
+  box-shadow: 0 0 20px -5px rgba(245, 158, 11, 0.25);
+}
+
+.glow-amber-lg {
+  box-shadow: 0 0 50px -10px rgba(245, 158, 11, 0.35);
+}
+
+.text-gradient-amber {
+  background: linear-gradient(135deg, #fffbeb 0%, #fbbf24 50%, #d97706 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.text-gradient-silver {
+  background: linear-gradient(135deg, #ffffff 0%, #cbd5e1 60%, #94a3b8 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* ==========================================================================
+   HIGH-CONTRAST LIGHT MODE SPECIFIC OVERRIDES
+   Enhanced legibility, crisp text contrast, frosted light glassmorphism
+   ========================================================================== */
+html.light-mode body {
+  background-color: #f8fafc;
+  color: #0f172a;
+}
+
+html.light-mode ::-webkit-scrollbar-track {
+  background: #f1f5f9;
+}
+html.light-mode ::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+}
+html.light-mode ::-webkit-scrollbar-thumb:hover {
+  background: #d97706;
+}
+
+/* Glassmorphism adaptation for Light Mode */
+html.light-mode .glass-panel {
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(15, 23, 42, 0.12);
+  box-shadow: 0 10px 30px -5px rgba(15, 23, 42, 0.08);
+}
+
+html.light-mode .glass-panel-amber {
+  background: rgba(254, 252, 232, 0.88);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(217, 119, 6, 0.35);
+  box-shadow: 0 10px 30px -5px rgba(217, 119, 6, 0.12);
+}
+
+/* Text and Headings in Light Mode */
+html.light-mode h1,
+html.light-mode h2,
+html.light-mode h3,
+html.light-mode h4 {
+  color: #090d16 !important;
+}
+
+html.light-mode .text-white {
+  color: #090d16 !important;
+}
+
+html.light-mode .text-neutral-200 {
+  color: #1e293b !important;
+}
+
+html.light-mode .text-neutral-300 {
+  color: #334155 !important;
+}
+
+html.light-mode .text-neutral-400 {
+  color: #475569 !important;
+}
+
+html.light-mode .text-neutral-500 {
+  color: #64748b !important;
+}
+
+/* High-contrast amber gradient for light background */
+html.light-mode .text-gradient-amber {
+  background: linear-gradient(135deg, #b45309 0%, #d97706 50%, #92400e 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* Sections backgrounds in Light Mode */
+html.light-mode section {
+  background-color: transparent !important;
+}
+
+html.light-mode #about {
+  background-color: #f1f5f9 !important;
+}
+
+html.light-mode #transformation {
+  background-color: #f8fafc !important;
+}
+
+html.light-mode #services {
+  background-color: #f1f5f9 !important;
+}
+
+html.light-mode #work {
+  background-color: #f8fafc !important;
+}
+
+html.light-mode #process {
+  background-color: #f1f5f9 !important;
+}
+
+html.light-mode #contact {
+  background-color: #f8fafc !important;
+}
+
+html.light-mode footer {
+  background-color: #0f172a !important;
+}
+html.light-mode footer .text-white {
+  color: #ffffff !important;
+}
+html.light-mode footer .text-neutral-400 {
+  color: #94a3b8 !important;
+}
+html.light-mode footer .text-neutral-500 {
+  color: #64748b !important;
+}
+
+/* Light mode inputs, cards, borders */
+html.light-mode input,
+html.light-mode select,
+html.light-mode textarea {
+  background-color: #ffffff !important;
+  color: #0f172a !important;
+  border-color: #cbd5e1 !important;
+}
+
+html.light-mode input::placeholder,
+html.light-mode textarea::placeholder {
+  color: #94a3b8 !important;
+}
+
+html.light-mode input:focus,
+html.light-mode select:focus,
+html.light-mode textarea:focus {
+  border-color: #d97706 !important;
+  box-shadow: 0 0 0 2px rgba(217, 119, 6, 0.2);
+}
+
+html.light-mode .border-white\/5,
+html.light-mode .border-white\/10,
+html.light-mode .border-white\/15,
+html.light-mode .border-white\/20 {
+  border-color: rgba(15, 23, 42, 0.12) !important;
+}
+
+html.light-mode .bg-white\/5 {
+  background-color: rgba(15, 23, 42, 0.04) !important;
+}
+
+html.light-mode .bg-white\/10 {
+  background-color: rgba(15, 23, 42, 0.08) !important;
+}
+
+html.light-mode .bg-neutral-900,
+html.light-mode .bg-neutral-900\/80,
+html.light-mode .bg-neutral-900\/90,
+html.light-mode .bg-neutral-950,
+html.light-mode .bg-neutral-950\/80 {
+  background-color: #ffffff !important;
+  border-color: #e2e8f0 !important;
+  box-shadow: 0 4px 12px rgba(15, 23, 42, 0.05);
+}
+
+html.light-mode .bg-neutral-800 {
+  background-color: #e2e8f0 !important;
+  color: #0f172a !important;
+}
+
+/* Light mode mobile drawer and modal */
+html.light-mode .fixed.top-18 {
+  background-color: #ffffff !important;
+  border-color: #e2e8f0 !important;
+}
+
+html.light-mode .header-scrolled {
+  background-color: rgba(255, 255, 255, 0.88) !important;
+  border-bottom: 1px solid rgba(15, 23, 42, 0.1) !important;
+  box-shadow: 0 4px 20px rgba(15, 23, 42, 0.06) !important;
+}

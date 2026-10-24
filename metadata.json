@@ -1,0 +1,6 @@
+{
+  "name": "JSS Enterprises – Restaurant & Café Digital Transformation",
+  "description": "JSS Enterprises transforms traditional restaurants and cafés into modern digital experiences through bespoke websites, 3D interactive web experiences, QR digital menus, WhatsApp ordering, and video creatives.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
